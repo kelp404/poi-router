@@ -20,7 +20,7 @@ angular.module 'poi.view', []
                 @param destroy {bool} if it is true, call .$destroy()
                 ###
                 if destroy
-                    @scope.$destroy()
+                    @scope?.$destroy()
                 else if @rule
                     if $router.oldState.name.indexOf("#{$router.state.name}.") is 0
                         # do not re-render when back to parent.

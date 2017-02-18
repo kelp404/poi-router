@@ -599,8 +599,11 @@
               @param resolve {object}
               @param destroy {bool} if it is true, call .$destroy()
                */
+              var ref;
               if (destroy) {
-                this.scope.$destroy();
+                if ((ref = this.scope) != null) {
+                  ref.$destroy();
+                }
               } else if (this.rule) {
                 if ($router.oldState.name.indexOf($router.state.name + ".") === 0) {
                   return;
