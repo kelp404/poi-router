@@ -19,7 +19,6 @@ angular.module 'poi.router', []
     @rules = {}  # all rules
     @views = []  # all views. poi-view will call `registerView()` to tell $router.
     @isReloadAtThisRender = no  # true: user call `$router.go {}, {}, reload: yes`
-    @isErrorBackAtThisRender = no  # true: render failed, then $router call `$window.history.back()`
     @resolves = []  # resolve objects. resolved object from all rules
     @oldState = {}
     @state = {}  # current state
@@ -43,20 +42,18 @@ angular.module 'poi.router', []
             ###
             Listen the event from $location when the location.href was changed.
             ###
-            if @isErrorBackAtThisRender
-                @isErrorBackAtThisRender = no
-                return
             if @currentRule?
                 # poi-view will call render at the first time.
                 # So we just call renderViews() when @currentRule is not null.
                 @renderViews yes, @isReloadAtThisRender
                 @isReloadAtThisRender = no
 
-    @renderViews = (locationChanged=no, reload=no) =>
+    @renderViews = (locationChanged=no, reload=no, nextRule=null) =>
         ###
         Render views. Fetch templates and resolve objects then bind that on views.
         @param locationChanged {bool} If location was changed, it should be yes.
         @param reload {bool} If it is true, it will re-render all views.
+        @param nextRule {rule} direct select the next rule.
         ###
         diffRuleIndex = 0
         isBackToParent = no
@@ -65,7 +62,7 @@ angular.module 'poi.router', []
         if not @currentRule? and not @nextRule?
             # When @currentRule and @nextRule are null, it mean this is first render.
             # We should set @nextRule by current url.
-            @nextRule = @findRuleByUri $location.path()
+            @nextRule = nextRule ? @findRuleByUri $location.path()
         else if reload
             if typeof(reload) is 'string'
                 for view, index in @views when view.rule.namespace is reload
@@ -73,15 +70,15 @@ angular.module 'poi.router', []
                     @resolves.splice index - 1
                     diffRuleIndex = index
                     break
-                @nextRule = @findRuleByUri $location.path()
+                @nextRule = nextRule ? @findRuleByUri $location.path()
             else
                 if @views.length
                     @views.splice 1
                 if @resolves.length
                     @resolves.splice 0
-                @nextRule = @findRuleByUri $location.path()
+                @nextRule = nextRule ? @findRuleByUri $location.path()
         else if locationChanged
-            @nextRule = @findRuleByUri $location.path()
+            @nextRule = nextRule ? @findRuleByUri $location.path()
             # removed different views and resolved objects
             diffRuleIndex = @nextRule.parents.length - 1
             isBackToParent = @currentRule.namespace.indexOf("#{@nextRule.namespace}.") is 0
@@ -155,13 +152,12 @@ angular.module 'poi.router', []
                 @views[diffRuleIndex].updateTemplate @nextRule.parents[diffRuleIndex], @flattenResolve(@resolves.slice(0, diffRuleIndex + 1)), reload
                 stepCompletedChange() if isFinialView
             , (error) =>
-                @isErrorBackAtThisRender = yes
                 for destroyView in destroyViews
                     @views.push destroyView
                 destroyViews = []
-                $window.history.back()
                 stepChanging()
                 stepChangeError error
+                @renderViews no, yes, @findErrorHandlerRule()
         else
             # compile view after poi-view was linked
             index = @views.length - 1
@@ -175,6 +171,13 @@ angular.module 'poi.router', []
         @param uri {string}
         ###
         for ruleName, rule of @rules when rule.matchReg.test(uri) and not rule.abstract
+            return rule
+        null
+    @findErrorHandlerRule = =>
+        ###
+        Find the name of rule that is 'error'.
+        ###
+        for ruleName, rule of @rules when ruleName is 'error'
             return rule
         null
 
@@ -343,6 +346,9 @@ angular.module 'poi.router', []
         $location.replace() if options.replace
 
     @reload = =>
+        ###
+        Reload the current rule, this method will not reload parent views.
+        ###
         @renderViews yes, @currentRule.namespace
 
     @href = (namespace, params={}, search) =>

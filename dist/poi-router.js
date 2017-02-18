@@ -30,7 +30,6 @@
     this.rules = {};
     this.views = [];
     this.isReloadAtThisRender = false;
-    this.isErrorBackAtThisRender = false;
     this.resolves = [];
     this.oldState = {};
     this.state = {};
@@ -50,10 +49,6 @@
           /*
           Listen the event from $location when the location.href was changed.
            */
-          if (_this.isErrorBackAtThisRender) {
-            _this.isErrorBackAtThisRender = false;
-            return;
-          }
           if (_this.currentRule != null) {
             _this.renderViews(true, _this.isReloadAtThisRender);
             return _this.isReloadAtThisRender = false;
@@ -62,7 +57,7 @@
       })(this));
     };
     this.renderViews = (function(_this) {
-      return function(locationChanged, reload) {
+      return function(locationChanged, reload, nextRule) {
         var destroyViews, diffRuleIndex, fn, i, index, isBackToParent, isFinialView, isParamsDifferent, j, k, len, len1, oldRule, ref, ref1, ref2, ref3, rule, ruleIndex, stepChangeError, stepChanging, stepCompletedChange, stepStartChange, tasks, view;
         if (locationChanged == null) {
           locationChanged = false;
@@ -70,17 +65,21 @@
         if (reload == null) {
           reload = false;
         }
+        if (nextRule == null) {
+          nextRule = null;
+        }
 
         /*
         Render views. Fetch templates and resolve objects then bind that on views.
         @param locationChanged {bool} If location was changed, it should be yes.
         @param reload {bool} If it is true, it will re-render all views.
+        @param nextRule {rule} direct select the next rule.
          */
         diffRuleIndex = 0;
         isBackToParent = false;
         destroyViews = [];
         if ((_this.currentRule == null) && (_this.nextRule == null)) {
-          _this.nextRule = _this.findRuleByUri($location.path());
+          _this.nextRule = nextRule != null ? nextRule : _this.findRuleByUri($location.path());
         } else if (reload) {
           if (typeof reload === 'string') {
             ref = _this.views;
@@ -94,7 +93,7 @@
               diffRuleIndex = index;
               break;
             }
-            _this.nextRule = _this.findRuleByUri($location.path());
+            _this.nextRule = nextRule != null ? nextRule : _this.findRuleByUri($location.path());
           } else {
             if (_this.views.length) {
               _this.views.splice(1);
@@ -102,10 +101,10 @@
             if (_this.resolves.length) {
               _this.resolves.splice(0);
             }
-            _this.nextRule = _this.findRuleByUri($location.path());
+            _this.nextRule = nextRule != null ? nextRule : _this.findRuleByUri($location.path());
           }
         } else if (locationChanged) {
-          _this.nextRule = _this.findRuleByUri($location.path());
+          _this.nextRule = nextRule != null ? nextRule : _this.findRuleByUri($location.path());
           diffRuleIndex = _this.nextRule.parents.length - 1;
           isBackToParent = _this.currentRule.namespace.indexOf(_this.nextRule.namespace + ".") === 0;
           ref1 = _this.nextRule.parents;
@@ -209,15 +208,14 @@
             }
           }, function(error) {
             var destroyView, l, len2;
-            _this.isErrorBackAtThisRender = true;
             for (l = 0, len2 = destroyViews.length; l < len2; l++) {
               destroyView = destroyViews[l];
               _this.views.push(destroyView);
             }
             destroyViews = [];
-            $window.history.back();
             stepChanging();
-            return stepChangeError(error);
+            stepChangeError(error);
+            return _this.renderViews(false, true, _this.findErrorHandlerRule());
           });
         } else {
           index = _this.views.length - 1;
@@ -241,6 +239,23 @@
         for (ruleName in ref) {
           rule = ref[ruleName];
           if (rule.matchReg.test(uri) && !rule.abstract) {
+            return rule;
+          }
+        }
+        return null;
+      };
+    })(this);
+    this.findErrorHandlerRule = (function(_this) {
+      return function() {
+
+        /*
+        Find the name of rule that is 'error'.
+         */
+        var ref, rule, ruleName;
+        ref = _this.rules;
+        for (ruleName in ref) {
+          rule = ref[ruleName];
+          if (ruleName === 'error') {
             return rule;
           }
         }
@@ -484,6 +499,10 @@
     })(this);
     this.reload = (function(_this) {
       return function() {
+
+        /*
+        Reload the current rule, this method will not reload parent views.
+         */
         return _this.renderViews(true, _this.currentRule.namespace);
       };
     })(this);
