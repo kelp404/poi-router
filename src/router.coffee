@@ -131,6 +131,7 @@ angular.module 'poi.router', []
             $rootScope.$broadcast '$stateChangeError', error
 
         if (not @currentRule? and @views.length is 1) or locationChanged
+            # (@currentRule==null and @views.length is 1) -> for the first render
             # start render
             tasks = []  # all promise to fetch resource
             for ruleIndex in [diffRuleIndex...@nextRule.parents.length] by 1
@@ -157,7 +158,7 @@ angular.module 'poi.router', []
                 destroyViews = []
                 stepChanging()
                 stepChangeError error
-                @renderViews no, yes, @findErrorHandlerRule()
+                @renderViews yes, yes, @findErrorHandlerRule()
         else
             # compile view after poi-view was linked
             index = @views.length - 1

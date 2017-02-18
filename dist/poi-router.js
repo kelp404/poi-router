@@ -215,7 +215,7 @@
             destroyViews = [];
             stepChanging();
             stepChangeError(error);
-            return _this.renderViews(false, true, _this.findErrorHandlerRule());
+            return _this.renderViews(true, true, _this.findErrorHandlerRule());
           });
         } else {
           index = _this.views.length - 1;
