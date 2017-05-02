@@ -109,11 +109,11 @@ angular.module 'poi.router', []
             # maybe there is a `poi-view` at the template but there are no rules
             return
 
-        stepStartChange = =>
+        stepStartChange = (cancel) =>
             ###
             Call this method when the render flow was started.
             ###
-            $rootScope.$broadcast '$stateChangeStart', @generateStateObject(@nextRule), @state
+            $rootScope.$broadcast '$stateChangeStart', @generateStateObject(@nextRule), @state, cancel
         stepChanging = =>
             ###
             Call this method when the resolve objects was done.
@@ -143,7 +143,13 @@ angular.module 'poi.router', []
                     if rule.templateUrl
                         tasks.push @fetchTemplate(rule.templateUrl).success (result) ->
                             rule.template = result
-            stepStartChange()
+            cancel = no
+            stepStartChange -> cancel = yes
+            if cancel
+                for destroyView in destroyViews
+                    @views.push destroyView
+                stepChanging()
+                return
             $q.all(tasks).then =>
                 stepChanging()
                 if destroyViews.length
@@ -155,7 +161,6 @@ angular.module 'poi.router', []
             , (error) =>
                 for destroyView in destroyViews
                     @views.push destroyView
-                destroyViews = []
                 stepChanging()
                 stepChangeError error
                 @renderViews yes, yes, @findErrorHandlerRule()

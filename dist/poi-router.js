@@ -58,7 +58,7 @@
     };
     this.renderViews = (function(_this) {
       return function(locationChanged, reload, nextRule) {
-        var destroyViews, diffRuleIndex, fn, i, index, isBackToParent, isFinialView, isParamsDifferent, j, k, len, len1, oldRule, ref, ref1, ref2, ref3, rule, ruleIndex, stepChangeError, stepChanging, stepCompletedChange, stepStartChange, tasks, view;
+        var cancel, destroyView, destroyViews, diffRuleIndex, fn, i, index, isBackToParent, isFinialView, isParamsDifferent, j, k, l, len, len1, len2, oldRule, ref, ref1, ref2, ref3, rule, ruleIndex, stepChangeError, stepChanging, stepCompletedChange, stepStartChange, tasks, view;
         if (locationChanged == null) {
           locationChanged = false;
         }
@@ -148,12 +148,12 @@
         } else if ((_this.nextRule == null) || _this.views.length > _this.nextRule.parents.length) {
           return;
         }
-        stepStartChange = function() {
+        stepStartChange = function(cancel) {
 
           /*
           Call this method when the render flow was started.
            */
-          return $rootScope.$broadcast('$stateChangeStart', _this.generateStateObject(_this.nextRule), _this.state);
+          return $rootScope.$broadcast('$stateChangeStart', _this.generateStateObject(_this.nextRule), _this.state, cancel);
         };
         stepChanging = function() {
 
@@ -193,7 +193,18 @@
             rule = _this.nextRule.parents[ruleIndex];
             fn(rule);
           }
-          stepStartChange();
+          cancel = false;
+          stepStartChange(function() {
+            return cancel = true;
+          });
+          if (cancel) {
+            for (l = 0, len2 = destroyViews.length; l < len2; l++) {
+              destroyView = destroyViews[l];
+              _this.views.push(destroyView);
+            }
+            stepChanging();
+            return;
+          }
           return $q.all(tasks).then(function() {
             var isFinialView;
             stepChanging();
@@ -207,12 +218,11 @@
               return stepCompletedChange();
             }
           }, function(error) {
-            var destroyView, l, len2;
-            for (l = 0, len2 = destroyViews.length; l < len2; l++) {
-              destroyView = destroyViews[l];
+            var len3, m;
+            for (m = 0, len3 = destroyViews.length; m < len3; m++) {
+              destroyView = destroyViews[m];
               _this.views.push(destroyView);
             }
-            destroyViews = [];
             stepChanging();
             stepChangeError(error);
             return _this.renderViews(true, true, _this.findErrorHandlerRule());
