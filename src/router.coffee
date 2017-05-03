@@ -339,16 +339,19 @@ angular.module 'poi.router', []
     @go = (namespace, params, options={}) =>
         ###
         Go to the url.
-        @param namespace {string} The namespace of the rule.
+        @param namespace {string} The namespace of the rule or the url.
         @param params {object} The params of the rule.
         @param options {object}
             replace: {bool}
             reload: {bool}  If it is true, it will reload all views.
         ###
         @isReloadAtThisRender = options.reload
-        search = {}
-        $location.path @href(namespace, params, search)
-        $location.search search
+        if namespace[0] is '/'
+            $location.url namespace
+        else
+            search = {}
+            $location.path @href(namespace, params, search)
+            $location.search search
         $location.replace() if options.replace
 
     @reload = =>

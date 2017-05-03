@@ -492,16 +492,20 @@
 
         /*
         Go to the url.
-        @param namespace {string} The namespace of the rule.
+        @param namespace {string} The namespace of the rule or the url.
         @param params {object} The params of the rule.
         @param options {object}
             replace: {bool}
             reload: {bool}  If it is true, it will reload all views.
          */
         _this.isReloadAtThisRender = options.reload;
-        search = {};
-        $location.path(_this.href(namespace, params, search));
-        $location.search(search);
+        if (namespace[0] === '/') {
+          $location.url(namespace);
+        } else {
+          search = {};
+          $location.path(_this.href(namespace, params, search));
+          $location.search(search);
+        }
         if (options.replace) {
           return $location.replace();
         }
