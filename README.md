@@ -157,7 +157,7 @@ $routerProvider.register 'web.store',
         ]
     templateUrl: "/views/stores/store.html"
     controller: 'StoreController'
-$routerProvider.register 'admin.store.status',
+$routerProvider.register 'web.store.status',
     uri: ''
     onEnter: ['$rootScope', 'store', ($rootScope, store) ->
         $rootScope.$title = "Status - #{store.title}"
