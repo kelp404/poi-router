@@ -260,10 +260,12 @@ angular.module 'poi.router', []
         Register the router rule.
         @param namespace {string} The name of the rule.
         @param args {object} The router rule.
+            abstract: {bool} This is abstract rule, it will render the child rule.
             uri: {string}  ex: '/projects/{projectId:[\w-]{20}}/tests/{testId:(?:[\w-]{20}|initial)}'
             resolve: {object}
             templateUrl: {string}
             controller: {string|list|function}
+            onEnter: {function}
             # ---- generate by register
             namespace: {string}
             uriParams: {list}  ex: ['projectId', '?index']
