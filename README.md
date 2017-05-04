@@ -137,7 +137,7 @@ $routerProvider.register 'web',
             $admin.api.store.getMyStores().then (response) ->
                 response.data
         ]
-    templateUrl: "/views/layout.html"
+    templateUrl: '/views/layout.html'
     controller: ['$scope', 'stores', ($scope, stores) ->
         $scope.stores = stores
     ]
@@ -155,13 +155,13 @@ $routerProvider.register 'web.store',
             .then (response) ->
                 response.data
         ]
-    templateUrl: "/views/stores/store.html"
+    templateUrl: '/views/stores/store.html'
     controller: 'StoreController'
 $routerProvider.register 'web.store.status',
     uri: ''
     onEnter: ['$rootScope', 'store', ($rootScope, store) ->
         $rootScope.$title = "Status - #{store.title}"
     ]
-    templateUrl: "/views/stores/status.html"
+    templateUrl: '/views/stores/status.html'
     controller: 'StoreStatusController'
 ```
