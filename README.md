@@ -29,8 +29,8 @@ angular.module 'your-module.routers', ['poi']
                     response.data
             ]
         templateUrl: '/template/index.html'
-        controller: ['$scope', ($scope) ->
-            $scope.page = 'index'
+        controller: ['$scope', 'data', ($scope, data) ->
+            $scope.data = data
         ]
 ]
 ```
