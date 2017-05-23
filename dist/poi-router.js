@@ -72,7 +72,7 @@
         /*
         Render views. Fetch templates and resolve objects then bind that on views.
         @param locationChanged {bool} If location was changed, it should be yes.
-        @param reload {bool} If it is true, it will re-render all views.
+        @param reload {bool|string} If it is true, it will re-render all views. string: reload the namespace.
         @param nextRule {rule} direct select the next rule.
          */
         diffRuleIndex = 0;
@@ -89,7 +89,7 @@
                 continue;
               }
               _this.views.splice(index + 1);
-              _this.resolves.splice(index - 1);
+              _this.resolves.splice(index);
               diffRuleIndex = index;
               break;
             }
@@ -391,10 +391,12 @@
         Register the router rule.
         @param namespace {string} The name of the rule.
         @param args {object} The router rule.
+            abstract: {bool} This is abstract rule, it will render the child rule.
             uri: {string}  ex: '/projects/{projectId:[\w-]{20}}/tests/{testId:(?:[\w-]{20}|initial)}'
             resolve: {object}
             templateUrl: {string}
             controller: {string|list|function}
+            onEnter: {function}
              * ---- generate by register
             namespace: {string}
             uriParams: {list}  ex: ['projectId', '?index']
@@ -604,7 +606,6 @@
           return $router.registerView({
             scope: null,
             rule: null,
-            resolve: null,
             updateTemplate: function(rule, resolve, destroy) {
 
               /*
@@ -625,7 +626,6 @@
                 this.scope.$destroy();
               }
               this.rule = rule;
-              this.resolve = angular.copy(resolve);
               this.scope = scope.$new();
               if (rule.controller) {
                 resolve.$scope = this.scope;
@@ -644,7 +644,6 @@
               this.scope.$destroy();
               this.scope = null;
               this.rule = null;
-              this.resolve = null;
               return $(element).html('');
             }
           });
