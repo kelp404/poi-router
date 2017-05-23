@@ -52,7 +52,7 @@ angular.module 'poi.router', []
         ###
         Render views. Fetch templates and resolve objects then bind that on views.
         @param locationChanged {bool} If location was changed, it should be yes.
-        @param reload {bool} If it is true, it will re-render all views.
+        @param reload {bool|string} If it is true, it will re-render all views. string: reload the namespace.
         @param nextRule {rule} direct select the next rule.
         ###
         diffRuleIndex = 0
