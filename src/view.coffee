@@ -11,7 +11,6 @@ angular.module 'poi.view', []
         $router.registerView
             scope: null
             rule: null
-            resolve: null
             updateTemplate: (rule, resolve, destroy) ->
                 ###
                 Update the poi-view
@@ -27,7 +26,6 @@ angular.module 'poi.view', []
                         return
                     @scope.$destroy()
                 @rule = rule
-                @resolve = angular.copy resolve
                 @scope = scope.$new()
                 if rule.controller
                     resolve.$scope = @scope
@@ -41,6 +39,5 @@ angular.module 'poi.view', []
                 @scope.$destroy()
                 @scope = null
                 @rule = null
-                @resolve = null
                 $(element).html ''
 ]
