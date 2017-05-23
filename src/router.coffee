@@ -67,7 +67,7 @@ angular.module 'poi.router', []
             if typeof(reload) is 'string'
                 for view, index in @views when view.rule.namespace is reload
                     @views.splice index + 1
-                    @resolves.splice index - 1
+                    @resolves.splice index
                     diffRuleIndex = index
                     break
                 @nextRule = nextRule ? @findRuleByUri $location.path()
