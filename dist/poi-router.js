@@ -326,12 +326,12 @@
 
         /*
         Fetch template.
-        @param templateUrl {string}
+        @param templateUrl {string|function}
         @returns {$http}
          */
         return $http({
           method: 'get',
-          url: templateUrl,
+          url: typeof templateUrl === 'function' ? templateUrl() : templateUrl,
           cache: $templateCache,
           headers: {
             Accept: 'text/html'
@@ -394,7 +394,7 @@
             abstract: {bool} This is abstract rule, it will render the child rule.
             uri: {string}  ex: '/projects/{projectId:[\w-]{20}}/tests/{testId:(?:[\w-]{20}|initial)}'
             resolve: {object}
-            templateUrl: {string}
+            templateUrl: {string|function}
             controller: {string|list|function}
             onEnter: {function}
              * ---- generate by register

@@ -216,12 +216,12 @@ angular.module 'poi.router', []
     @fetchTemplate = (templateUrl) =>
         ###
         Fetch template.
-        @param templateUrl {string}
+        @param templateUrl {string|function}
         @returns {$http}
         ###
         $http
             method: 'get'
-            url: templateUrl
+            url: if typeof(templateUrl) is 'function' then templateUrl() else templateUrl
             cache: $templateCache
             headers:
                 Accept: 'text/html'
@@ -263,7 +263,7 @@ angular.module 'poi.router', []
             abstract: {bool} This is abstract rule, it will render the child rule.
             uri: {string}  ex: '/projects/{projectId:[\w-]{20}}/tests/{testId:(?:[\w-]{20}|initial)}'
             resolve: {object}
-            templateUrl: {string}
+            templateUrl: {string|function}
             controller: {string|list|function}
             onEnter: {function}
             # ---- generate by register
