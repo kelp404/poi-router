@@ -5,7 +5,7 @@ An AngularJS 1.X router.
 
 ## Installation
 ```bash
-$ bower install https://github.com/kelp404/poi-router.git\#v0.0.1 -S
+$ bower install https://github.com/kelp404/poi-router.git\#v0.0.3 -S
 ```
 
 
@@ -84,9 +84,11 @@ $router.go = (namespace, params, options={}) ->
 ```
 
 ```coffee
-$router.reload = ->
+$router.reload = (reloadParents) ->
     ###
-    Reload the current rule, this method will not reload parent views.
+    Reload the current rule.
+    This method will not reload parent views if reloadParents is null.
+    @param reloadParents {bool|null}
     ###
 ```
 
