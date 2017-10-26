@@ -6,7 +6,7 @@ angular.module 'poi.view', []
     $controller = $injector.get '$controller'
 
     restrict: 'A'
-    link: (scope, element) ->
+    link: (scope, $element) ->
         $router.registerView
             scope: null
             rule: null
@@ -31,12 +31,12 @@ angular.module 'poi.view', []
                     if rule.onEnter
                         $injector.invoke rule.onEnter, rule, resolve
                     $controller rule.controller, resolve
-                $(element).html rule.template
-                $compile(element.contents()) @scope
+                $element.html rule.template
+                $compile($element.contents()) @scope
             destroy: ->
                 return if not @rule
                 @scope.$destroy()
                 @scope = null
                 @rule = null
-                $(element).html ''
+                $element.html ''
 ]
