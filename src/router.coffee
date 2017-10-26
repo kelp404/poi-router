@@ -356,11 +356,13 @@ angular.module 'poi.router', []
             $location.search search
         $location.replace() if options.replace
 
-    @reload = =>
+    @reload = (reloadParents) =>
         ###
-        Reload the current rule, this method will not reload parent views.
+        Reload the current rule.
+        This method will not reload parent views if reloadParents is null.
+        @param reloadParents {bool|null}
         ###
-        @renderViews yes, @currentRule.namespace
+        @renderViews yes, reloadParents ? @currentRule.namespace
 
     @href = (namespace, params={}, search) =>
         ###
