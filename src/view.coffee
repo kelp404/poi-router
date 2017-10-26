@@ -1,7 +1,6 @@
 angular.module 'poi.view', []
 
 .directive 'poiView', ['$injector', ($injector) ->
-    $rootScope = $injector.get '$rootScope'
     $router = $injector.get '$router'
     $compile = $injector.get '$compile'
     $controller = $injector.get '$controller'
