@@ -1,4 +1,34 @@
 (function() {
+  angular.module('poi.directive', []).directive('a', [
+    '$injector', function($injector) {
+      var $location, $router;
+      $location = $injector.get('$location');
+      $router = $injector.get('$router');
+      return {
+        restrict: 'E',
+        link: function(scope, element, attrs) {
+          if (attrs.target || !attrs.href || attrs.href[0] !== '/') {
+            return;
+          }
+          return element.on('click', function(event) {
+            if (event.ctrlKey || event.metaKey || event.shiftKey || event.which === 2 || event.button === 2) {
+              return;
+            }
+            if ($location.url() === attrs.href) {
+              event.preventDefault();
+              return scope.$apply(function() {
+                return $router.reload(true);
+              });
+            }
+          });
+        }
+      };
+    }
+  ]);
+
+}).call(this);
+
+(function() {
   angular.module('poi.initial', []).config([
     '$locationProvider', function($locationProvider) {
       return $locationProvider.html5Mode({
@@ -11,7 +41,7 @@
 }).call(this);
 
 (function() {
-  angular.module('poi', ['poi.initial', 'poi.router', 'poi.view']);
+  angular.module('poi', ['poi.directive', 'poi.initial', 'poi.router', 'poi.view']);
 
 }).call(this);
 
@@ -597,29 +627,10 @@
 (function() {
   angular.module('poi.view', []).directive('poiView', [
     '$injector', function($injector) {
-      var $compile, $controller, $location, $rootScope, $router, onClickLink;
+      var $compile, $controller, $router;
       $router = $injector.get('$router');
-      $rootScope = $injector.get('$rootScope');
-      $location = $injector.get('$location');
       $compile = $injector.get('$compile');
       $controller = $injector.get('$controller');
-      onClickLink = function(event) {
-        var href, target;
-        if (event.ctrlKey || event.metaKey || event.shiftKey || event.which === 2 || event.button === 2) {
-          return;
-        }
-        target = event.target.target;
-        href = event.target.href;
-        if (target || !href) {
-          return;
-        }
-        if ($location.absUrl() === href) {
-          event.preventDefault();
-          return $rootScope.$apply(function() {
-            return $router.reload(true);
-          });
-        }
-      };
       return {
         restrict: 'A',
         link: function(scope, $element) {
@@ -636,9 +647,6 @@
                */
               var ref;
               if (destroy) {
-                if (this.rule.parents.length === 1) {
-                  $element.off('click', 'a', onClickLink);
-                }
                 if ((ref = this.scope) != null) {
                   ref.$destroy();
                 }
@@ -658,17 +666,11 @@
                 $controller(rule.controller, resolve);
               }
               $element.html(rule.template);
-              $compile($element.contents())(this.scope);
-              if (rule.parents.length === 1) {
-                return $element.on('click', 'a', onClickLink);
-              }
+              return $compile($element.contents())(this.scope);
             },
             destroy: function() {
               if (!this.rule) {
                 return;
-              }
-              if (this.rule.parents.length === 1) {
-                $element.off('click', 'a', onClickLink);
               }
               this.scope.$destroy();
               this.scope = null;
