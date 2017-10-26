@@ -514,12 +514,14 @@
       };
     })(this);
     this.reload = (function(_this) {
-      return function() {
+      return function(reloadParents) {
 
         /*
-        Reload the current rule, this method will not reload parent views.
+        Reload the current rule.
+        This method will not reload parent views if reloadParents is null.
+        @param reloadParents {bool|null}
          */
-        return _this.renderViews(true, _this.currentRule.namespace);
+        return _this.renderViews(true, reloadParents != null ? reloadParents : _this.currentRule.namespace);
       };
     })(this);
     this.href = (function(_this) {
@@ -595,14 +597,32 @@
 (function() {
   angular.module('poi.view', []).directive('poiView', [
     '$injector', function($injector) {
-      var $compile, $controller, $rootScope, $router;
-      $rootScope = $injector.get('$rootScope');
+      var $compile, $controller, $location, $rootScope, $router, onClickLink;
       $router = $injector.get('$router');
+      $rootScope = $injector.get('$rootScope');
+      $location = $injector.get('$location');
       $compile = $injector.get('$compile');
       $controller = $injector.get('$controller');
+      onClickLink = function(event) {
+        var href, target;
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.which === 2 || event.button === 2) {
+          return;
+        }
+        target = event.target.target;
+        href = event.target.href;
+        if (target || !href) {
+          return;
+        }
+        if ($location.absUrl() === href) {
+          event.preventDefault();
+          return $rootScope.$apply(function() {
+            return $router.reload(true);
+          });
+        }
+      };
       return {
         restrict: 'A',
-        link: function(scope, element) {
+        link: function(scope, $element) {
           return $router.registerView({
             scope: null,
             rule: null,
@@ -616,6 +636,9 @@
                */
               var ref;
               if (destroy) {
+                if (this.rule.parents.length === 1) {
+                  $element.off('click', 'a', onClickLink);
+                }
                 if ((ref = this.scope) != null) {
                   ref.$destroy();
                 }
@@ -634,17 +657,23 @@
                 }
                 $controller(rule.controller, resolve);
               }
-              $(element).html(rule.template);
-              return $compile(element.contents())(this.scope);
+              $element.html(rule.template);
+              $compile($element.contents())(this.scope);
+              if (rule.parents.length === 1) {
+                return $element.on('click', 'a', onClickLink);
+              }
             },
             destroy: function() {
               if (!this.rule) {
                 return;
               }
+              if (this.rule.parents.length === 1) {
+                $element.off('click', 'a', onClickLink);
+              }
               this.scope.$destroy();
               this.scope = null;
               this.rule = null;
-              return $(element).html('');
+              return $element.html('');
             }
           });
         }
