@@ -8,6 +8,6 @@ jobs:
       - checkout
       - run: npm install -g coffee-script grunt-cli bower
       - run: npm install
-      - run: bower install
+      - run: bower install --allow-root
       - run: grunt build
       - run: npm test
