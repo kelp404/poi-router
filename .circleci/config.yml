@@ -1,0 +1,13 @@
+version: 2.0
+jobs:
+  build:
+    working_directory: ~/poi-router
+    docker:
+      - image: node:8.9.4
+    steps:
+      - checkout
+      - run: npm install -g coffee-script grunt-cli bower
+      - run: npm install
+      - run: bower install
+      - run: grunt build
+      - run: npm test

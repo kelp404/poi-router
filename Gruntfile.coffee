@@ -8,6 +8,9 @@ module.exports = (grunt) ->
                     'dist/poi-router.js': [
                         'src/**/*.coffee'
                     ]
+        karma:
+            testFrontend:
+                configFile: 'test/karma.config.coffee'
 
     grunt.registerTask 'build', [
         'coffee'
@@ -17,3 +20,4 @@ module.exports = (grunt) ->
     # tasks
     # -----------------------------------
     grunt.loadNpmTasks 'grunt-contrib-coffee'
+    grunt.loadNpmTasks 'grunt-karma'

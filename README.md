@@ -1,4 +1,4 @@
-# poi-router
+# poi-router [![circle-ci](https://circleci.com/gh/kelp404/poi-router.png?circle-token=dfe6244905a9da85d07bf56f2190d8e74b0b30c5)](https://circleci.com/gh/kelp404/poi-router)
 
 An AngularJS 1.X router.
 
