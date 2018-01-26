@@ -7,7 +7,6 @@ module.exports = (config) ->
 
         # list of files / patterns to load in the browser
         files: [
-            # angular
             'bower_components/angular/angular.js'
             'bower_components/angular-mocks/angular-mocks.js'
             'dist/poi-router.js'
