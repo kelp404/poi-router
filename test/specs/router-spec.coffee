@@ -11,6 +11,41 @@ describe 'poi.router', ->
 
 
     describe '$router', ->
+        it '$router.registerView() will push the view into views and call renderViews().', inject ($router) ->
+            spyOn routerProvider, 'renderViews'
+            $router.registerView 'view'
+            expect(routerProvider.views[0]).toBe 'view'
+            expect(routerProvider.renderViews).toHaveBeenCalled()
+
+        it '$router.go() with url and reload option.', inject ($router, $location) ->
+            spyOn $location, 'url'
+            $router.go '/home', null, reload: yes
+            expect(routerProvider.isReloadAtThisRender).toBeTruthy()
+            expect($location.url).toHaveBeenCalledWith '/home'
+        it '$router.go() with namespace and replace option.', inject ($router, $location) ->
+            spyOn $location, 'path'
+            spyOn $location, 'search'
+            spyOn $location, 'replace'
+            hrefSpy = spyOn routerProvider, 'href'
+            hrefSpy.and.returnValue 'href'
+            $router.go 'namespace', 'params', replace: yes
+            expect(routerProvider.isReloadAtThisRender).toBeFalsy()
+            expect(hrefSpy).toHaveBeenCalledWith 'namespace', 'params', {}
+            expect($location.path).toHaveBeenCalledWith 'href'
+            expect($location.search).toHaveBeenCalledWith {}
+            expect($location.replace).toHaveBeenCalled()
+
+        it '$router.reload() will call renderViews()', inject ($router) ->
+            spyOn routerProvider, 'renderViews'
+            routerProvider.currentRule =
+                namespace: 'test'
+            $router.reload()
+            expect(routerProvider.renderViews).toHaveBeenCalledWith yes, 'test'
+        it '$router.reload() with reload parents will call renderViews()', inject ($router) ->
+            spyOn routerProvider, 'renderViews'
+            $router.reload yes
+            expect(routerProvider.renderViews).toHaveBeenCalledWith yes, yes
+
         it '$router.oldState and $routerProvider.oldState are the same object', inject ($router) ->
             expect($router.oldState).not.toBeNull()
             expect($router.oldState).toBe routerProvider.oldState
