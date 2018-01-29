@@ -46,6 +46,25 @@ describe 'poi.router', ->
             $router.reload yes
             expect(routerProvider.renderViews).toHaveBeenCalledWith yes, yes
 
+        it '$router.href() with undefined namespace.', inject ($router) ->
+            expect(-> $router.href('undefined')).toThrow new Error('Can\'t find the rule undefined.')
+        it '$router.href() without search argument.', inject ($router) ->
+            routerProvider.rules =
+                home:
+                    hrefTemplate: '/{key}'
+            result = $router.href 'home',
+                key: 'test'
+                index: 0
+            expect(result).toBe '/test?index=0'
+        it '$router.href() with search argument.', inject ($router) ->
+            routerProvider.rules =
+                home:
+                    hrefTemplate: '/{key}'
+            search = {}
+            result = $router.href 'home', key: 'test', index: 0, search
+            expect(result).toBe '/test'
+            expect(search).toEqual index: 0
+
         it '$router.oldState and $routerProvider.oldState are the same object', inject ($router) ->
             expect($router.oldState).not.toBeNull()
             expect($router.oldState).toBe routerProvider.oldState
