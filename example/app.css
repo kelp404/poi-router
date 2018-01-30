@@ -1,0 +1,7 @@
+html.nprogress-busy {
+    cursor: wait !important;
+}
+
+html.nprogress-busy body, html.nprogress-busy div, html.nprogress-busy input, html.nprogress-busy textarea, html.nprogress-busy button, html.nprogress-busy select, html.nprogress-busy img, html.nprogress-busy a, html.nprogress-busy label, html.nprogress-busy .panel-heading {
+    cursor: wait !important;
+}

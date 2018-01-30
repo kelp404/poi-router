@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "id": "77b5d326-bec0-4c42-a46c-f38598019940",
+      "name": "Kelp",
+      "email": "kelp@phate.org"
+    },
+    {
+      "id": "939a3fcc-c1a3-4de8-9582-605b904ddbe4",
+      "name": "Example",
+      "email": "name@example.com"
+    }
+  ]
+}

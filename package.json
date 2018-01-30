@@ -1,6 +1,6 @@
 {
   "name": "poi-router",
-  "version": "0.0.0",
+  "version": "0.0.4",
   "description": "An AngularJS router.",
   "main": "dist/poi-router.js",
   "scripts": {
@@ -17,9 +17,12 @@
   },
   "homepage": "https://github.com/kelp404/poi-router#readme",
   "devDependencies": {
+    "express": "4.16.2",
     "grunt": "0.4.5",
     "grunt-contrib-coffee": "1.0.0",
+    "grunt-contrib-watch": "1.0.0",
     "grunt-karma": "2.0.0",
+    "grunt-parallel": "0.5.1",
     "jasmine-core": "2.9.1",
     "karma": "2.0.0",
     "karma-coffee-preprocessor": "1.0.1",

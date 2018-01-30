@@ -1,0 +1,23 @@
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>Users</h3>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="user in users.items">
+                    <td><a href="/poi-router/users/{{ user.id }}">{{ user.id }}</a></td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
