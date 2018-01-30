@@ -26,10 +26,10 @@ angular.module 'poi.view', []
                     @scope.$destroy()
                 @rule = rule
                 @scope = scope.$new()
+                resolve.$scope = @scope
+                if rule.onEnter
+                    $injector.invoke rule.onEnter, rule, resolve
                 if rule.controller
-                    resolve.$scope = @scope
-                    if rule.onEnter
-                        $injector.invoke rule.onEnter, rule, resolve
                     $controller rule.controller, resolve
                 $element.html rule.template
                 $compile($element.contents()) @scope

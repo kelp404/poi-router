@@ -39,10 +39,10 @@ angular.module 'app', ['poi']
         controller: ->
 
     # ---------------------------------------------------------
-    # /poi-router/users
+    # /poi-router/users/
     # ---------------------------------------------------------
     $routerProvider.register 'web.users',
-        uri: '/users'
+        uri: '/users/'
         onEnter: ['$rootScope', ($rootScope) ->
             $rootScope.$title = 'Users - poi-router'
         ]
@@ -59,10 +59,10 @@ angular.module 'app', ['poi']
         ]
 
     # ---------------------------------------------------------
-    # /poi-router/users/:userId
+    # /poi-router/users/:userId/
     # ---------------------------------------------------------
     $routerProvider.register 'web.user',
-        uri: '/users/{userId:[a-f0-9-]{36}}'
+        uri: '/users/{userId:[a-f0-9-]{36}}/'
         onEnter: ['$rootScope', ($rootScope) ->
             $rootScope.$title = 'User - poi-router'
         ]

@@ -41,7 +41,7 @@
         controller: function() {}
       });
       $routerProvider.register('web.users', {
-        uri: '/users',
+        uri: '/users/',
         onEnter: [
           '$rootScope', function($rootScope) {
             return $rootScope.$title = 'Users - poi-router';
@@ -67,7 +67,7 @@
         ]
       });
       return $routerProvider.register('web.user', {
-        uri: '/users/{userId:[a-f0-9-]{36}}',
+        uri: '/users/{userId:[a-f0-9-]{36}}/',
         onEnter: [
           '$rootScope', function($rootScope) {
             return $rootScope.$title = 'User - poi-router';
