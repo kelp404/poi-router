@@ -658,11 +658,11 @@
               }
               this.rule = rule;
               this.scope = scope.$new();
+              resolve.$scope = this.scope;
+              if (rule.onEnter) {
+                $injector.invoke(rule.onEnter, rule, resolve);
+              }
               if (rule.controller) {
-                resolve.$scope = this.scope;
-                if (rule.onEnter) {
-                  $injector.invoke(rule.onEnter, rule, resolve);
-                }
                 $controller(rule.controller, resolve);
               }
               $element.html(rule.template);
