@@ -6,8 +6,7 @@ jobs:
       - image: node:8.9.4
     steps:
       - checkout
-      - run: npm install -g coffee-script grunt-cli bower
+      - run: npm install -g coffee-script grunt-cli
       - run: npm install
-      - run: bower install --allow-root
       - run: grunt build
       - run: npm test

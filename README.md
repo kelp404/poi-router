@@ -45,9 +45,8 @@ angular.module 'your-module.routers', ['poi']
 ## Development
 ```bash
 # Install node modules.
-$ npm install -g grunt-cli bower coffee-script nodemon
+$ npm install -g grunt-cli coffee-script nodemon
 $ npm install
-$ bower install
 ```
 
 ```bash
