@@ -1,6 +1,6 @@
 {
   "name": "poi-router",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "An AngularJS router.",
   "main": "dist/poi-router.js",
   "scripts": {
@@ -10,6 +10,11 @@
     "type": "git",
     "url": "git+https://github.com/kelp404/poi-router.git"
   },
+  "keywords": [
+    "AngularJS",
+    "CoffeeScript",
+    "router"
+  ],
   "author": "Kelp <kelp@phate.org>",
   "license": "MIT",
   "bugs": {

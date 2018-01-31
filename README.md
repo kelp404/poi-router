@@ -4,8 +4,13 @@ An AngularJS 1.X router.
 
 
 ## Installation
+**bower**
 ```bash
-$ bower install https://github.com/kelp404/poi-router.git\#v0.0.4 -S
+$ bower install https://github.com/kelp404/poi-router.git\#v0.0.5 -S
+```
+**npm**
+```bash
+$ npm install poi-router --save
 ```
 
 
