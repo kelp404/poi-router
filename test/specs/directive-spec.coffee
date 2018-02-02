@@ -55,3 +55,11 @@ describe 'poi.directive', ->
             $rootScope.$digest()
             $element.triggerHandler 'click'
             expect($router.reload).not.toHaveBeenCalled()
+
+    describe 'poiView', ->
+        it 'check poi-view will call $router.registerView().', inject ($router) ->
+            spyOn $router, 'registerView'
+            $element = $ '<div poi-view></div>'
+            $compile($element) $scope
+            $rootScope.$digest()
+            expect($router.registerView).toHaveBeenCalled()
