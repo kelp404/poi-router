@@ -24,6 +24,62 @@
         }
       };
     }
+  ]).directive('poiView', [
+    '$injector', function($injector) {
+      var $compile, $controller, $router;
+      $router = $injector.get('$router');
+      $compile = $injector.get('$compile');
+      $controller = $injector.get('$controller');
+      return {
+        restrict: 'A',
+        link: function(scope, $element) {
+          return $router.registerView({
+            scope: null,
+            rule: null,
+            updateTemplate: function(rule, resolve, destroy) {
+
+              /*
+              Update the poi-view
+              @param rule {Rule}
+              @param resolve {object}
+              @param destroy {bool} if it is true, call .$destroy()
+               */
+              var ref;
+              if (destroy) {
+                if ((ref = this.scope) != null) {
+                  ref.$destroy();
+                }
+              } else if (this.rule) {
+                if ($router.oldState.name.indexOf($router.state.name + ".") === 0) {
+                  return;
+                }
+                this.scope.$destroy();
+              }
+              this.rule = rule;
+              this.scope = scope.$new();
+              resolve.$scope = this.scope;
+              if (rule.onEnter) {
+                $injector.invoke(rule.onEnter, rule, resolve);
+              }
+              if (rule.controller) {
+                $controller(rule.controller, resolve);
+              }
+              $element.html(rule.template);
+              return $compile($element.contents())(this.scope);
+            },
+            destroy: function() {
+              if (!this.rule) {
+                return;
+              }
+              this.scope.$destroy();
+              this.scope = null;
+              this.rule = null;
+              return $element.html('');
+            }
+          });
+        }
+      };
+    }
   ]);
 
 }).call(this);
@@ -41,7 +97,7 @@
 }).call(this);
 
 (function() {
-  angular.module('poi', ['poi.directive', 'poi.initial', 'poi.router', 'poi.view']);
+  angular.module('poi', ['poi.directive', 'poi.initial', 'poi.router']);
 
 }).call(this);
 
@@ -621,66 +677,5 @@
       })(this)
     ];
   });
-
-}).call(this);
-
-(function() {
-  angular.module('poi.view', []).directive('poiView', [
-    '$injector', function($injector) {
-      var $compile, $controller, $router;
-      $router = $injector.get('$router');
-      $compile = $injector.get('$compile');
-      $controller = $injector.get('$controller');
-      return {
-        restrict: 'A',
-        link: function(scope, $element) {
-          return $router.registerView({
-            scope: null,
-            rule: null,
-            updateTemplate: function(rule, resolve, destroy) {
-
-              /*
-              Update the poi-view
-              @param rule {Rule}
-              @param resolve {object}
-              @param destroy {bool} if it is true, call .$destroy()
-               */
-              var ref;
-              if (destroy) {
-                if ((ref = this.scope) != null) {
-                  ref.$destroy();
-                }
-              } else if (this.rule) {
-                if ($router.oldState.name.indexOf($router.state.name + ".") === 0) {
-                  return;
-                }
-                this.scope.$destroy();
-              }
-              this.rule = rule;
-              this.scope = scope.$new();
-              resolve.$scope = this.scope;
-              if (rule.onEnter) {
-                $injector.invoke(rule.onEnter, rule, resolve);
-              }
-              if (rule.controller) {
-                $controller(rule.controller, resolve);
-              }
-              $element.html(rule.template);
-              return $compile($element.contents())(this.scope);
-            },
-            destroy: function() {
-              if (!this.rule) {
-                return;
-              }
-              this.scope.$destroy();
-              this.scope = null;
-              this.rule = null;
-              return $element.html('');
-            }
-          });
-        }
-      };
-    }
-  ]);
 
 }).call(this);
