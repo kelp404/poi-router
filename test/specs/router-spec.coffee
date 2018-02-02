@@ -10,6 +10,38 @@ describe 'poi.router', ->
         module 'fakeModule'
 
     describe '$router', ->
+        it '$router.register() will push the rule object into routerProvider.rules.', inject ($router) ->
+            $router.register 'web',
+                uri: '/'
+                templateUrl: '/template.html'
+                controller: 'HomeController'
+            routerProvider.rules.web.parents.pop()
+            delete routerProvider.rules.web.getCurrentParams
+            expect(routerProvider.rules).toEqual
+                web:
+                    uri: '/'
+                    templateUrl: '/template.html'
+                    controller: 'HomeController'
+                    namespace: 'web'
+                    uriParams: []
+                    matchPattern: '/'
+                    hrefTemplate: '/'
+                    parents: []
+                    matchReg: /^\/$/
+
+        it 'check getCurrentParams() of $router.register().', inject ($router, $location) ->
+            spyOn($location, 'path').and.returnValue '/AWFQ3MSHnmhfNRKX-yO9/?filter=root'
+            spyOn($location, 'search').and.returnValue
+                filter: 'root'
+            $router.register 'web',
+                uri: '/{userId:[\\w-]{20}}/?filter'
+                templateUrl: '/template.html'
+                controller: 'HomeController'
+            rule = routerProvider.rules.web
+            expect(rule.getCurrentParams()).toEqual
+                userId: 'AWFQ3MSHnmhfNRKX-yO9'
+                filter: 'root'
+
         it '$router.registerView() will push the view into views and call renderViews().', inject ($router) ->
             spyOn routerProvider, 'renderViews'
             $router.registerView 'view'
