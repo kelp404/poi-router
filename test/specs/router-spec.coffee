@@ -2,13 +2,12 @@ describe 'poi.router', ->
     fakeModule = null
     routerProvider = null
 
-    beforeEach module('poi')
     beforeEach ->
         fakeModule = angular.module 'fakeModule', ['poi']
         fakeModule.config ($routerProvider) ->
             routerProvider = $routerProvider
-    beforeEach module('fakeModule')
-
+        module 'poi'
+        module 'fakeModule'
 
     describe '$router', ->
         it '$router.registerView() will push the view into views and call renderViews().', inject ($router) ->
