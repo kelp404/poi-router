@@ -4,8 +4,13 @@ An AngularJS 1.X router.
 
 
 ## Installation
+**bower**
 ```bash
-$ bower install https://github.com/kelp404/poi-router.git\#v0.0.4 -S
+$ bower install https://github.com/kelp404/poi-router.git\#v0.0.6 -S
+```
+**npm**
+```bash
+$ npm install poi-router --save
 ```
 
 
@@ -45,9 +50,8 @@ angular.module 'your-module.routers', ['poi']
 ## Development
 ```bash
 # Install node modules.
-$ npm install -g grunt-cli bower coffee-script nodemon
+$ npm install -g grunt-cli coffee-script nodemon
 $ npm install
-$ bower install
 ```
 
 ```bash
