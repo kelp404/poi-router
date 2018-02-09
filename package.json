@@ -1,6 +1,6 @@
 {
   "name": "poi-router",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "An AngularJS router.",
   "main": "dist/poi-router.js",
   "scripts": {
