@@ -1,10 +1,13 @@
 {
   "name": "poi-router",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "An AngularJS router.",
   "main": "dist/poi-router.js",
   "scripts": {
-    "test": "grunt karma"
+    "test": "grunt karma",
+    "build": "grunt build",
+    "ncu": "./node_modules/npm-check-updates/bin/ncu",
+    "dev": "grunt"
   },
   "repository": {
     "type": "git",
@@ -22,8 +25,8 @@
   },
   "homepage": "https://github.com/kelp404/poi-router#readme",
   "devDependencies": {
-    "angular": "1.5.11",
-    "angular-mocks": "1.5.11",
+    "angular": "1.6.10",
+    "angular-mocks": "1.6.10",
     "express": "4.16.2",
     "grunt": "0.4.5",
     "grunt-contrib-coffee": "1.0.0",

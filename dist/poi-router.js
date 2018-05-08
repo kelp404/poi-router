@@ -270,8 +270,8 @@
               }));
             }
             if (rule.templateUrl) {
-              return tasks.push(_this.fetchTemplate(rule.templateUrl).success(function(result) {
-                return rule.template = result;
+              return tasks.push(_this.fetchTemplate(rule.templateUrl).then(function(response) {
+                return rule.template = response.data;
               }));
             }
           };
