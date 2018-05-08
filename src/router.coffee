@@ -141,8 +141,8 @@ angular.module 'poi.router', []
                         tasks.push @fetchResolve(rule).then (result) =>
                             @resolves[rule.parents.length - 1] = result
                     if rule.templateUrl
-                        tasks.push @fetchTemplate(rule.templateUrl).success (result) ->
-                            rule.template = result
+                        tasks.push @fetchTemplate(rule.templateUrl).then (response) ->
+                            rule.template = response.data
             cancel = no
             stepStartChange -> cancel = yes
             if cancel
