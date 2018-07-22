@@ -347,14 +347,27 @@ angular.module 'poi.router', []
             replace: {bool}
             reload: {bool}  If it is true, it will reload all views.
         ###
-        @isReloadAtThisRender = options.reload
         if namespace[0] is '/'
-            $location.url namespace
+            isTargetEqualSource = $location.url() is namespace
         else
-            search = {}
-            $location.path @href(namespace, params, search)
-            $location.search search
-        $location.replace() if options.replace
+            {uri, search} = @href namespace, params
+            isTargetEqualSource = $location.path() is uri and Object.keys($location.search()).length is Object.keys(search).length
+            if isTargetEqualSource
+                for key, value of $location.search() when search[key] isnt value
+                    isTargetEqualSource = no
+                    break
+        if isTargetEqualSource
+            # The target url is equal to the current url.
+            # Change $location will not trigger AngularJS state change events.
+            @reload yes
+        else
+            @isReloadAtThisRender = options.reload
+            if namespace[0] is '/'
+                $location.url namespace
+            else
+                $location.path uri
+                $location.search search
+            $location.replace() if options.replace
 
     @reload = (reloadParents) =>
         ###
@@ -364,13 +377,15 @@ angular.module 'poi.router', []
         ###
         @renderViews yes, reloadParents ? @currentRule.namespace
 
-    @href = (namespace, params={}, search) =>
+    @href = (namespace, params={}) =>
         ###
         Generate the href by namespace and params.
         @param namespace {string} The namespace of the rule.
         @param params {object} The params of the rule.
-        @param search {object|null} If it is an object, query string will appended at here, else append query string at href.
-        @returns {string} The url.
+        @returns {object}
+            uri: {string}
+            uriWithSearch: {string}
+            search: {object}
         ###
         rule = @rules[namespace]
         if not rule
@@ -380,16 +395,15 @@ angular.module 'poi.router', []
         for paramKey, paramValue of params when href.indexOf("{#{paramKey}}") >= 0
             href = href.replace "{#{paramKey}}", encodeURIComponent(paramValue)
             usedKey.push paramKey
-        if search?
-            for paramKey, paramValue of params when paramKey not in usedKey
-                search[paramKey] = paramValue
-        else
-            queryString = []
-            for paramKey, paramValue of params when paramKey not in usedKey
-                queryString.push "#{encodeURIComponent(paramKey)}=#{encodeURIComponent(paramValue)}"
-            if queryString.length
-                href += "?#{queryString.join('&')}"
-        href
+        search = {}
+        for paramKey, paramValue of params when paramKey not in usedKey
+            search[paramKey] = paramValue
+        queryString = []
+        for paramKey, paramValue of params when paramKey not in usedKey
+            queryString.push "#{encodeURIComponent(paramKey)}=#{encodeURIComponent(paramValue)}"
+        uri: href
+        uriWithSearch: "#{href}?#{queryString.join('&')}"
+        search: search
 
 
     # -----------------------------------------------------

@@ -573,7 +573,7 @@
     })(this);
     this.go = (function(_this) {
       return function(namespace, params, options) {
-        var search;
+        var isTargetEqualSource, key, ref, ref1, search, uri, value;
         if (options == null) {
           options = {};
         }
@@ -586,16 +586,36 @@
             replace: {bool}
             reload: {bool}  If it is true, it will reload all views.
          */
-        _this.isReloadAtThisRender = options.reload;
         if (namespace[0] === '/') {
-          $location.url(namespace);
+          isTargetEqualSource = $location.url() === namespace;
         } else {
-          search = {};
-          $location.path(_this.href(namespace, params, search));
-          $location.search(search);
+          ref = _this.href(namespace, params), uri = ref.uri, search = ref.search;
+          isTargetEqualSource = $location.path() === uri && Object.keys($location.search()).length === Object.keys(search).length;
+          if (isTargetEqualSource) {
+            ref1 = $location.search();
+            for (key in ref1) {
+              value = ref1[key];
+              if (!(search[key] !== value)) {
+                continue;
+              }
+              isTargetEqualSource = false;
+              break;
+            }
+          }
         }
-        if (options.replace) {
-          return $location.replace();
+        if (isTargetEqualSource) {
+          return _this.reload(true);
+        } else {
+          _this.isReloadAtThisRender = options.reload;
+          if (namespace[0] === '/') {
+            $location.url(namespace);
+          } else {
+            $location.path(uri);
+            $location.search(search);
+          }
+          if (options.replace) {
+            return $location.replace();
+          }
         }
       };
     })(this);
@@ -611,8 +631,8 @@
       };
     })(this);
     this.href = (function(_this) {
-      return function(namespace, params, search) {
-        var href, paramKey, paramValue, queryString, rule, usedKey;
+      return function(namespace, params) {
+        var href, paramKey, paramValue, queryString, rule, search, usedKey;
         if (params == null) {
           params = {};
         }
@@ -621,8 +641,10 @@
         Generate the href by namespace and params.
         @param namespace {string} The namespace of the rule.
         @param params {object} The params of the rule.
-        @param search {object|null} If it is an object, query string will appended at here, else append query string at href.
-        @returns {string} The url.
+        @returns {object}
+            uri: {string}
+            uriWithSearch: {string}
+            search: {object}
          */
         rule = _this.rules[namespace];
         if (!rule) {
@@ -638,26 +660,25 @@
           href = href.replace("{" + paramKey + "}", encodeURIComponent(paramValue));
           usedKey.push(paramKey);
         }
-        if (search != null) {
-          for (paramKey in params) {
-            paramValue = params[paramKey];
-            if (indexOf.call(usedKey, paramKey) < 0) {
-              search[paramKey] = paramValue;
-            }
-          }
-        } else {
-          queryString = [];
-          for (paramKey in params) {
-            paramValue = params[paramKey];
-            if (indexOf.call(usedKey, paramKey) < 0) {
-              queryString.push((encodeURIComponent(paramKey)) + "=" + (encodeURIComponent(paramValue)));
-            }
-          }
-          if (queryString.length) {
-            href += "?" + (queryString.join('&'));
+        search = {};
+        for (paramKey in params) {
+          paramValue = params[paramKey];
+          if (indexOf.call(usedKey, paramKey) < 0) {
+            search[paramKey] = paramValue;
           }
         }
-        return href;
+        queryString = [];
+        for (paramKey in params) {
+          paramValue = params[paramKey];
+          if (indexOf.call(usedKey, paramKey) < 0) {
+            queryString.push((encodeURIComponent(paramKey)) + "=" + (encodeURIComponent(paramValue)));
+          }
+        }
+        return {
+          uri: href,
+          uriWithSearch: href + "?" + (queryString.join('&')),
+          search: search
+        };
       };
     })(this);
     this.$get = [
