@@ -58,10 +58,13 @@ describe 'poi.router', ->
             spyOn $location, 'search'
             spyOn $location, 'replace'
             hrefSpy = spyOn routerProvider, 'href'
-            hrefSpy.and.returnValue 'href'
+            hrefSpy.and.returnValue
+                uri: 'href'
+                uriWithSearch: '/href?index=0'
+                search: {}
             $router.go 'namespace', 'params', replace: yes
             expect(routerProvider.isReloadAtThisRender).toBeFalsy()
-            expect(hrefSpy).toHaveBeenCalledWith 'namespace', 'params', {}
+            expect(hrefSpy).toHaveBeenCalledWith 'namespace', 'params'
             expect($location.path).toHaveBeenCalledWith 'href'
             expect($location.search).toHaveBeenCalledWith {}
             expect($location.replace).toHaveBeenCalled()
@@ -86,15 +89,20 @@ describe 'poi.router', ->
             result = $router.href 'home',
                 key: 'test'
                 index: 0
-            expect(result).toBe '/test?index=0'
+            expect(result).toEqual
+                uri: '/test'
+                uriWithSearch: '/test?index=0'
+                search: index: 0
         it '$router.href() with search argument.', inject ($router) ->
             routerProvider.rules =
                 home:
                     hrefTemplate: '/{key}'
-            search = {}
-            result = $router.href 'home', key: 'test', index: 0, search
-            expect(result).toBe '/test'
-            expect(search).toEqual index: 0
+            result = $router.href 'home', key: 'test', index: 0
+            expect(result).toEqual
+                uri: '/test'
+                uriWithSearch: '/test?index=0'
+                search:
+                    index: 0
 
         it '$router.oldState and $routerProvider.oldState are the same object', inject ($router) ->
             expect($router.oldState).not.toBeNull()
