@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/poi-router
     docker:
-      - image: node:8.11.4
+      - image: node:12.8.1
     steps:
       - checkout
       - run: npm install -g coffee-script grunt-cli
